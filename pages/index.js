@@ -1,65 +1,81 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Google from '../components/google'
+import Menu from '../components/Menu'
+import SignInOut from '../components/SignInOut'
+import Pagination from '../components/pagination'
+import React, { useEffect, useRef, useCallback } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import axios from 'axios'
+import Pusher from 'pusher-js'
+import ReactPlayer from 'react-player'
+import { signIn, signOut, useSession, getSession } from 'next-auth/client'
+import HomePage from './Home'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-export default function Home() {
+export default function Home({ categories }) {
+  const router = useRouter()
+  const user = useSelector(State => State.User)
+  const input = useRef()
+  const dispatch = useDispatch()
+
+  // const [session, loading] = useSession()
+
+  // var pusher = new Pusher('0f451dc85b035e1558d1', {
+  //   cluster: 'ap1'
+  // });
+
+  // useEffect(() => {
+  //   var channel = pusher.subscribe('lives');
+  //   channel.bind('inserted', function (data) {
+  //     alert(JSON.stringify(data.data.name))
+
+  //   });
+
+  // }, [])
+
+  // useEffect(() => {
+  //   axios.get('http://localhost:5000').then(response => {
+  //     console.log(response.data);
+  //     dispatch({
+  //       type: 'Add_User',
+  //       user: response.data
+  //     })
+  //   })
+  // }, [])
+
+  // const change = () => {
+
+  //   axios.post('http://localhost:5000', {
+  //     name: input.current.value,
+  //     age: 20
+  //   }).then(response => {
+  //     console.log(response.data);
+  //     dispatch({
+  //       type: 'Add_User',
+  //       user: response.data
+  //     })
+  //   })
+
+  // }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div>
+      {/* <Pagination data={data} /> */}
+      {/* <input type="text" ref={input} />
+      <button onClick={change}>Change</button>
+      <div>
+        {user?.map((item, id) => (
+          <p key={id}>{item.name}</p>
+        ))}
+      </div> */}
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      {/* {!data && <>
+        Not signed in <br />
+  <button onClick={() => signIn()}>Sign in</button>
+      </> 
+       
+      } */}
+      <Link href="/Home?id=jaad">gooooooooo</Link>
     </div>
   )
 }
