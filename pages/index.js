@@ -1,81 +1,78 @@
+import React, { useEffect, useState, useCallback } from 'react'
 import Google from '../components/google'
-import Menu from '../components/Menu'
 import SignInOut from '../components/SignInOut'
-import Pagination from '../components/pagination'
-import React, { useEffect, useRef, useCallback } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import MagicLink from '../components/MagicLink'
+import Translate from '../components/translate'
+import TextEditor from '../components/TextEditor'
+import { signIn, signOut, getSession } from 'next-auth/client'
 import axios from 'axios'
-import Pusher from 'pusher-js'
-import ReactPlayer from 'react-player'
-import { signIn, signOut, useSession, getSession } from 'next-auth/client'
-import HomePage from './Home'
+import { PrismaClient } from '@prisma/client'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import Nadine from '../components/nadine'
 
-export default function Home({ categories }) {
-  const router = useRouter()
-  const user = useSelector(State => State.User)
-  const input = useRef()
-  const dispatch = useDispatch()
+const prisma = new PrismaClient()
 
-  // const [session, loading] = useSession()
+export const getServerSideProps = async context => {
+  const session = await getSession(context)
+  const data = await prisma.user.findMany()
+  let doc = []
+  if (session) {
+    let id = 0
+    data.map(item => {
+      if (item.name === session?.user.email) {
+        id = item.id
+      }
+    })
+    doc = await prisma.docs.findMany({
+      where: {
+        UserId: id,
+      },
+    })
+  }
+  return {
+    props: { session, doc: session ? doc : '' },
+  }
+}
 
-  // var pusher = new Pusher('0f451dc85b035e1558d1', {
-  //   cluster: 'ap1'
-  // });
+export default function Home({ session, doc }) {
+  const [docs, setDocs] = useState(doc)
 
-  // useEffect(() => {
-  //   var channel = pusher.subscribe('lives');
-  //   channel.bind('inserted', function (data) {
-  //     alert(JSON.stringify(data.data.name))
+  if (!session) {
+    return (
+      <div>
+        <button onClick={signIn}>login</button>
+      </div>
+    )
+  }
 
-  //   });
-
-  // }, [])
-
-  // useEffect(() => {
-  //   axios.get('http://localhost:5000').then(response => {
-  //     console.log(response.data);
-  //     dispatch({
-  //       type: 'Add_User',
-  //       user: response.data
-  //     })
-  //   })
-  // }, [])
-
-  // const change = () => {
-
-  //   axios.post('http://localhost:5000', {
-  //     name: input.current.value,
-  //     age: 20
-  //   }).then(response => {
-  //     console.log(response.data);
-  //     dispatch({
-  //       type: 'Add_User',
-  //       user: response.data
-  //     })
-  //   })
-
-  // }
+  const [input, setInput] = useState('')
+  async function addtodb() {
+    await axios.post('/api/prisma', {
+      name: session.user.email,
+      doc: input,
+    })
+    await axios
+      .post('/api/Docs', {
+        name: session.user.email,
+      })
+      .then(data => {
+        setDocs(data?.data)
+      })
+  }
 
   return (
     <div>
-      {/* <Pagination data={data} /> */}
-      {/* <input type="text" ref={input} />
-      <button onClick={change}>Change</button>
-      <div>
-        {user?.map((item, id) => (
-          <p key={id}>{item.name}</p>
+      <input type="text" onChange={e => setInput(e.target.value)} />
+      <button onClick={addtodb}>add</button>
+      <br />
+      <button onClick={signOut}>sign out</button>
+      {doc &&
+        docs?.map(item => (
+          <Link href={`Editor?id=${item.id}`} key={item.id}>
+            <p> {item.docName}</p>
+          </Link>
         ))}
-      </div> */}
-
-      {/* {!data && <>
-        Not signed in <br />
-  <button onClick={() => signIn()}>Sign in</button>
-      </> 
-       
-      } */}
-      <Link href="/Home?id=jaad">gooooooooo</Link>
+      {/* <Nadine /> */}
     </div>
   )
 }

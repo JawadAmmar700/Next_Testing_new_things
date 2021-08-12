@@ -1,3 +1,3 @@
-module.exports = {
-  target: 'serverless',
-}
+const nextTranslate = require('next-translate')
+
+module.exports = nextTranslate()
